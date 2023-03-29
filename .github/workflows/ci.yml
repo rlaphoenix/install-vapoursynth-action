@@ -1,0 +1,23 @@
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Test the GitHub Action
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.10']
+        vapoursynth-version: [58, 59, 60, 61]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install VapourSynth R${{ matrix.vapoursynth-version }}
+        uses: ./
+        with:
+          version: ${{ matrix.vapoursynth-version }}
+          cache: true
+      - name: Try using VapourSynth in Python ${{ matrix.python-version }}
+        run: python -c "import vapoursynth; print(vapoursynth.core.version_number())"

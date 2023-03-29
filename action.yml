@@ -1,0 +1,16 @@
+name: 'Install VapourSynth'
+description: 'Install the VapourSynth C++ library in the current runner'
+inputs:
+  version:
+    description: 'Version to install'
+    required: false
+  cache:
+    description: 'Cache the compiled library'
+    required: false
+    default: true
+outputs:
+  version:
+    description: 'The version that was installed'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
