@@ -3,14 +3,81 @@ description: 'Install the VapourSynth C++ library in the current runner'
 inputs:
   version:
     description: 'Version to install'
-    required: false
+    required: true
   cache:
     description: 'Cache the compiled library'
     required: false
     default: true
 outputs:
-  version:
-    description: 'The version that was installed'
+  zimg-branch:
+    description: "Version of zimg that was compiled"
+    value: ${{ steps.get-zimg-branch.outputs.zimg-branch }}
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
+  using: 'composite'
+  steps:
+    - name: Ensure NASM is installed
+      run: sudo apt-get install --yes nasm
+      shell: bash
+
+    - name: Get zimg branch
+      id: get-zimg-branch
+      run: |
+        version=${{ inputs.version }}
+        if [ $version -ge 55 ]; then
+          branch=3.0
+        elif [ $version -ge 46 ]; then
+          branch=2.9
+        elif [ $version -ge 45 ]; then
+          branch=2.8
+        else
+          branch=2.7
+        fi
+        echo "zimg-branch=$branch" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache zimg compilation
+      if: inputs.cache == 'true'
+      id: get-zimg-cache
+      uses: actions/cache@v3
+      with:
+        key: zimg-${{ steps.get-zimg-branch.outputs.zimg-branch }}
+        path: zimg
+    - name: Compile zimg v${{ steps.get-zimg-branch.outputs.zimg-branch }}
+      if: inputs.cache == 'false' || steps.get-zimg-cache.outputs.cache-hit != 'true'
+      run: |
+        branch="v${{ steps.get-zimg-branch.outputs.zimg-branch }}"
+        git clone https://github.com/sekrit-twc/zimg --depth 1 --branch $branch
+        cd zimg
+        ./autogen.sh
+        ./configure --prefix=/usr
+        make
+      shell: bash
+    - name: Install zimg v${{ steps.get-zimg-branch.outputs.zimg-branch }}
+      run: |
+        cd zimg
+        sudo make install
+      shell: bash
+
+    - name: Cache VapourSynth compilation
+      if: inputs.cache == 'true'
+      id: get-vs-cache
+      uses: actions/cache@v3
+      with:
+        key: vs-R${{ inputs.version }}
+        path: vapoursynth
+    - name: Compile VapourSynth R${{ inputs.version }}
+      if: inputs.cache == 'false' || steps.get-vs-cache.outputs.cache-hit != 'true'
+      run: |
+        branch="R${{ inputs.version }}"
+        git clone https://github.com/vapoursynth/vapoursynth --depth 1 --branch $branch
+        cd vapoursynth
+        ./autogen.sh
+        ./configure --prefix=/usr --disable-vsscript --disable-python-module
+        make
+      shell: bash
+    - name: Install VapourSynth R${{ inputs.version }}
+      run: |
+        cd vapoursynth
+        sudo make install
+        pip install .
+      shell: bash

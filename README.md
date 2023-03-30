@@ -25,7 +25,7 @@ following plugins and tools will be unavailable:
 
 #### `version` (int)
 
-The version to install. It will install the latest version if not specified.
+*Required* The version to install. It must be manually specified.
 
 #### `cache` (bool)
 
@@ -35,19 +35,28 @@ manually specified.
 
 ### Outputs
 
-#### `version` (int)
+#### `zimg-branch` (int)
 
-The version that was installed.
+The branch zimg was compiled with, e.g., `3.0`.
 
 ## Supported Versions
 
-The action automatically downloads the latest VapourSynth version information via PyPI's API.
-This means it supports any version that has a PyPI release. Therefore, any version that does
-not have a PyPI release will not be recognized as a valid VapourSynth version.
+The action supports any version tagged as `R...` on the VapourSynth GitHub. E.g., `55`
+for R55, `61-RC1` for R61-RC1 and so on. The version number does not resolve to the
+latest minor-version. E.g., `version: 47` will not install R47.2, it will install R47.
+The version number is never pre-checked to be valid. It will instead fail during the
+git clone.
 
-Do note that due to this, some versions are unable to be installed as they don't have any PyPI
-releases. E.g., R55. Also the zimg version has yet to be automated and will need updating over
-time.
+Since this action does not pre-validate versions against a hardcoded list of versions,
+it won't need updating. However, VapourSynth updates to newer zimg versions every now
+and then and this action has no way to know which version is required. Therefore, the
+project still requires updating whenever the zimg version is updated.
+
+## Supported Runners
+
+Only Linux runners are currently supported. The following runners have been tested:
+
+- `ubuntu-22.04`
 
 ## Credit
 
