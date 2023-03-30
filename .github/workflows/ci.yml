@@ -2,12 +2,51 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # ubuntu-22.04 breaks compilation of zimg <=v2.9
+    runs-on: ubuntu-20.04
     name: Test the GitHub Action
     strategy:
       matrix:
-        python-version: ['3.8', '3.10']
-        vapoursynth-version: [58, 59, 60, 61]
+        include:
+          # this is a matrix of all 3.8-3.11 VapourSynth versions
+          - python-version: '3.8'
+            vapoursynth-version: '49'
+          - python-version: '3.8'
+            vapoursynth-version: '50'
+          - python-version: '3.8'
+            vapoursynth-version: '51'
+          - python-version: '3.8'
+            vapoursynth-version: '52'
+          - python-version: '3.9'
+            vapoursynth-version: '53'
+          - python-version: '3.9'
+            vapoursynth-version: '54'
+          - python-version: '3.9'
+            vapoursynth-version: '55'
+          - python-version: '3.9'
+            vapoursynth-version: '56'
+          - python-version: '3.9'
+            vapoursynth-version: '57'
+          - python-version: '3.8'
+            vapoursynth-version: '58'
+          - python-version: '3.10'
+            vapoursynth-version: '58'
+          - python-version: '3.8'
+            vapoursynth-version: '59'
+          - python-version: '3.10'
+            vapoursynth-version: '59'
+          - python-version: '3.8'
+            vapoursynth-version: '60'
+          - python-version: '3.10'
+            vapoursynth-version: '60'
+          - python-version: '3.8'
+            vapoursynth-version: '61'
+          - python-version: '3.10'
+            vapoursynth-version: '61'
+          - python-version: '3.8'
+            vapoursynth-version: '62'
+          - python-version: '3.11'
+            vapoursynth-version: '62'
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
