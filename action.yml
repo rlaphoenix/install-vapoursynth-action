@@ -23,11 +23,12 @@ runs:
       id: get-zimg-branch
       run: |
         version=${{ inputs.version }}
-        if [ $version -ge 55 ]; then
+        version_int=${version%.*}
+        if [ $version_int -ge 55 ]; then
           branch=3.0
-        elif [ $version -ge 46 ]; then
+        elif [ $version_int -ge 46 ]; then
           branch=2.9
-        elif [ $version -ge 45 ]; then
+        elif [ $version_int -ge 45 ]; then
           branch=2.8
         else
           branch=2.7
