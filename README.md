@@ -15,7 +15,7 @@ following plugins and tools will be unavailable:
 
 ```yaml
 - name: Install VapourSynth
-  uses: rlaphoenix/install-vapoursynth-action@v2.0.2
+  uses: rlaphoenix/install-vapoursynth-action@v2
   with:
     version: 61
     cache: true
@@ -26,6 +26,12 @@ following plugins and tools will be unavailable:
 #### `version` (int)
 
 *Required* The version to install. It must be manually specified.
+
+#### `zimg-version` (int)
+
+Override the automated zimg version that will be installed. This should only be used
+if you want to use a specific VapourSynth and zimg version combination, or if the
+built-in VS+zimg version mapping is out of date.
 
 #### `cache` (bool)
 

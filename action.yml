@@ -4,6 +4,10 @@ inputs:
   version:
     description: 'Version to install'
     required: true
+  zimg-version:
+    description: 'Override the automated zimg version that will be installed'
+    required: false
+    default: 0
   cache:
     description: 'Cache the compiled library'
     required: false
@@ -22,16 +26,21 @@ runs:
     - name: Get zimg branch
       id: get-zimg-branch
       run: |
-        version=${{ inputs.version }}
-        version_int=${version%.*}
-        if [ $version_int -ge 55 ]; then
-          branch=3.0
-        elif [ $version_int -ge 46 ]; then
-          branch=2.9
-        elif [ $version_int -ge 45 ]; then
-          branch=2.8
+        explicit_version=${{ inputs.zimg-version }}
+        if [ $explicit_version -gt 0 ]; then
+          branch=$explicit_version
         else
-          branch=2.7
+          version=${{ inputs.version }}
+          version_int=${version%.*}
+          if [ $version_int -ge 55 ]; then
+            branch=3.0
+          elif [ $version_int -ge 46 ]; then
+            branch=2.9
+          elif [ $version_int -ge 45 ]; then
+            branch=2.8
+          else
+            branch=2.7
+          fi
         fi
         echo "zimg-branch=$branch" >> $GITHUB_OUTPUT
       shell: bash
