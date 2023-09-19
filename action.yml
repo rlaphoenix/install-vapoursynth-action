@@ -60,12 +60,12 @@ runs:
         cd /tmp/zimg
         ./autogen.sh
         ./configure --prefix=/usr
-        make
+        make -j2
       shell: bash
     - name: Install zimg v${{ steps.get-zimg-branch.outputs.zimg-branch }}
       run: |
         cd /tmp/zimg
-        sudo make install
+        sudo make install -j2
       shell: bash
 
     - name: Cache VapourSynth compilation
@@ -83,11 +83,11 @@ runs:
         cd /tmp/vapoursynth
         ./autogen.sh
         ./configure --prefix=/usr --disable-vsscript --disable-python-module
-        make
+        make -j2
       shell: bash
     - name: Install VapourSynth R${{ inputs.version }}
       run: |
         cd /tmp/vapoursynth
-        sudo make install
+        sudo make install -j2
         pip install .
       shell: bash
