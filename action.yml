@@ -19,6 +19,16 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Set preferred compilers
+      run: |
+        echo "CC=gcc-9" >> $GITHUB_ENV
+        echo "CXX=g++-9" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Print compiler version
+      run: ${{ env.CC }} --version
+      shell: bash
+
     - name: Ensure NASM is installed
       run: sudo apt-get install --yes nasm
       shell: bash
