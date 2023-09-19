@@ -62,10 +62,11 @@ runs:
         echo "zimg-branch=$branch" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Cache zimg compilation
+    # Compile & Install zimg
+    - name: Restore zimg compilation cache
       if: inputs.cache == 'true'
       id: get-zimg-cache
-      uses: actions/cache@v3
+      uses: actions/cache/restore@v3
       with:
         key: zimg-${{ steps.get-zimg-branch.outputs.zimg-branch }}
         path: zimg
@@ -85,13 +86,20 @@ runs:
         pushd zimg
         sudo make install -j2
         popd
-        rm -rf zimg
       shell: bash
+    - name: Save zimg compilation cache
+      if: inputs.cache == 'true' && steps.get-zimg-cache.outputs.cache-hit != 'true'
+      id: set-zimg-cache
+      uses: actions/cache/save@v3
+      with:
+        key: zimg-${{ steps.get-zimg-branch.outputs.zimg-branch }}
+        path: zimg
 
-    - name: Cache VapourSynth compilation
+    # Compile & Install VapourSynth
+    - name: Restore VapourSynth compilation cache
       if: inputs.cache == 'true'
       id: get-vs-cache
-      uses: actions/cache@v3
+      uses: actions/cache/restore@v3
       with:
         key: vs-R${{ inputs.version }}
         path: vapoursynth
@@ -112,5 +120,17 @@ runs:
         sudo make install -j2
         pip install .
         popd
+      shell: bash
+    - name: Save VapourSynth compilation cache
+      if: inputs.cache == 'true' && steps.get-vs-cache.outputs.cache-hit != 'true'
+      id: set-vs-cache
+      uses: actions/cache/save@v3
+      with:
+        key: vs-R${{ inputs.version }}
+        path: vapoursynth
+
+    - name: Cleanup
+      run: |
+        rm -rf zimg
         rm -rf vapoursynth
       shell: bash
