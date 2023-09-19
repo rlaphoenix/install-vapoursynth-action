@@ -51,21 +51,23 @@ runs:
       uses: actions/cache@v3
       with:
         key: zimg-${{ steps.get-zimg-branch.outputs.zimg-branch }}
-        path: /tmp/zimg
+        path: zimg
     - name: Compile zimg v${{ steps.get-zimg-branch.outputs.zimg-branch }}
       if: inputs.cache == 'false' || steps.get-zimg-cache.outputs.cache-hit != 'true'
       run: |
         branch="v${{ steps.get-zimg-branch.outputs.zimg-branch }}"
-        git clone https://github.com/sekrit-twc/zimg --depth 1 --branch $branch /tmp/zimg
-        cd /tmp/zimg
+        git clone https://github.com/sekrit-twc/zimg --depth 1 --branch $branch
+        pushd zimg
         ./autogen.sh
         ./configure --prefix=/usr
         make -j2
+        popd
       shell: bash
     - name: Install zimg v${{ steps.get-zimg-branch.outputs.zimg-branch }}
       run: |
-        cd /tmp/zimg
+        pushd zimg
         sudo make install -j2
+        popd
       shell: bash
 
     - name: Cache VapourSynth compilation
@@ -74,20 +76,22 @@ runs:
       uses: actions/cache@v3
       with:
         key: vs-R${{ inputs.version }}
-        path: /tmp/vapoursynth
+        path: vapoursynth
     - name: Compile VapourSynth R${{ inputs.version }}
       if: inputs.cache == 'false' || steps.get-vs-cache.outputs.cache-hit != 'true'
       run: |
         branch="R${{ inputs.version }}"
-        git clone https://github.com/vapoursynth/vapoursynth --depth 1 --branch $branch /tmp/vapoursynth
-        cd /tmp/vapoursynth
+        git clone https://github.com/vapoursynth/vapoursynth --depth 1 --branch $branch
+        pushd vapoursynth
         ./autogen.sh
         ./configure --prefix=/usr --disable-vsscript --disable-python-module
         make -j2
+        popd
       shell: bash
     - name: Install VapourSynth R${{ inputs.version }}
       run: |
-        cd /tmp/vapoursynth
+        pushd vapoursynth
         sudo make install -j2
         pip install .
+        popd
       shell: bash
