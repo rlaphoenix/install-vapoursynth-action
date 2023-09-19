@@ -85,6 +85,7 @@ runs:
         pushd zimg
         sudo make install -j2
         popd
+        rm -rf zimg
       shell: bash
 
     - name: Cache VapourSynth compilation
@@ -111,4 +112,5 @@ runs:
         sudo make install -j2
         pip install .
         popd
+        rm -rf vapoursynth
       shell: bash
