@@ -33,6 +33,13 @@ runs:
       run: sudo apt-get install --yes nasm
       shell: bash
 
+    - name: Install/upgrade required Python packages
+      # Cython v3.x borked installs for some reason
+      run: |
+        pip install -U wheel
+        pip install --force Cython==0.29.36
+      shell: bash
+
     - name: Get zimg branch
       id: get-zimg-branch
       run: |
