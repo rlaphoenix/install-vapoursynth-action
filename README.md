@@ -15,7 +15,7 @@ following plugins and tools will be unavailable:
 
 ```yaml
 - name: Install VapourSynth
-  uses: rlaphoenix/install-vapoursynth-action@v2
+  uses: rlaphoenix/install-vapoursynth-action@v2.1.1
   with:
     version: 61
     cache: true
